@@ -2,51 +2,49 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>QRコード読み取り</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRコードリーダー</title>
 </head>
 <body>
-  <h1>QRコード読み取りテスト</h1>
-  <video id="video" width="300" height="200" autoplay playsinline></video>
+  <h1>QRコードリーダー</h1>
+  <video id="video" width="300" height="200" autoplay></video>
   <canvas id="canvas" hidden></canvas>
-  <p id="result">読み取り結果: なし</p>
+  <p id="result">QRコードの内容がここに表示されます</p>
 
-  <!-- jsQRライブラリ -->
-  https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const result = document.getElementById('result');
-    const ctx = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } },
-          audio: false
-        });
+    // カメラ映像を取得
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
         video.srcObject = stream;
+        video.play();
+      })
+      .catch((err) => {
+        console.error("カメラのアクセスに失敗しました:", err);
+      });
 
-        const scan = () => {
-          if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, canvas.width, canvas.height);
+    // QRコードをスキャン
+    video.addEventListener('play', () => {
+      const scanQRCode = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            if (code) {
-              result.textContent = "読み取り結果: " + code.data;
-            }
-          }
-          requestAnimationFrame(scan);
-        };
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-        scan();
-      } catch (error) {
-        alert('カメラの起動に失敗しました: ' + error.message);
-        console.error("カメラ起動エラー:", error);
-      }
+        if (code) {
+          result.textContent = `QRコードの内容: ${code.data}`;
+        } else {
+          requestAnimationFrame(scanQRCode);
+        }
+      };
+      scanQRCode();
     });
   </script>
 </body>
