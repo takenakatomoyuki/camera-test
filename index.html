@@ -18,12 +18,12 @@
     const canvas = document.getElementById('canvas');
     const result = document.getElementById('result');
     const ctx = canvas.getContext('2d');
-    let sent = false; // 二重送信防止
+    let sent = false;
 
     window.addEventListener('DOMContentLoaded', async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } },
+          video: { facingMode: { ideal: "environment" } },
           audio: false
         });
         video.srcObject = stream;
@@ -33,7 +33,11 @@
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const barcode = code.data;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+            if (code && !sent) {
+              const barcode = code.data;
               result.textContent = "読み取り結果: " + barcode;
               sent = true;
 
@@ -49,8 +53,7 @@
               .then(data => {
                 console.log("Lambdaの応答:", data);
               })
-              .catch(error => {
-                console.error("送信エラー:", error);
+              console.error("送信エラー:", error);
               });
             }
           }
