@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スマホカメラ起動</title>
+  <title>自動カメラ起動</title>
 </head>
 <body>
-  <button id="startCamera"　width="300" height="200">カメラ起動</button>
-　<video id="video" width=100% height=100% autoplay playsinline></video>
+  <video id="video" width=auto height=auto autoplay playsinline></video>
+
   <script>
-    document.getElementById('startCamera').addEventListener('click', async () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { exact: "environment" } },
