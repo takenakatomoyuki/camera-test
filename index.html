@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スマホカメラ起動</title>
+</head>
+<body>
+  <button id="startCamera">カメラ起動</button>
+  <video id="video" width="300" height="200" autoplay playsinline></video>
+
+  <script>
+    document.getElementById('startCamera').addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: "environment" } },
+          audio: false
+        });
+        const videoElement = document.getElementById('video');
+        videoElement.srcObject = stream;
+      } catch (error) {
+        alert('カメラの起動に失敗しました: ' + error.message);
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
