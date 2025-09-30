@@ -6,12 +6,13 @@
 </head>
 <body>
   <h1>サイト開いたらカメラ起動</h1>
+  <h2>更新</h2>
   <video id="video" width="300" height="200" autoplay playsinline></video>
   <canvas id="canvas" hidden></canvas>
   <p id="result">読み取り結果: なし</p>
 
   <!-- jsQRライブラリ -->
-  https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js
+  https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js</script>
 
   <script>
     const video = document.getElementById('video');
@@ -46,7 +47,8 @@
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
-                barcode: barcode })
+                },
+                body: JSON.stringify({ barcode: barcode })
               })
               .then(response => response.json())
               .then(data => {
@@ -54,10 +56,7 @@
               })
               .catch(error => {
                 console.error("送信エラー:", error);
-              });
-            }
-          }
-          requestAnimationFrame(scan);
+             AnimationFrame(scan);
         };
 
         scan();
