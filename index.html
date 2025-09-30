@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>QRコード読み取りテスト</h1>
-  <video id="video" width=auto height=auto autoplay playsinline></video>
+  <video id="video" width="300" height="200" autoplay playsinline></video>
   <canvas id="canvas" hidden></canvas>
   <p id="result">読み取り結果: なし</p>
 
@@ -36,7 +36,7 @@
             const code = jsQR(imageData.data, canvas.width, canvas.height);
 
             if (code) {
-             Content = "読み取り結果: " + code.data;
+              result.textContent = "読み取り結果: " + code.data;
             }
           }
           requestAnimationFrame(scan);
