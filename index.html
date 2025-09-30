@@ -43,13 +43,13 @@
 
               // Lambdaへ送信
               fetch("https://zz5f2lezac.execute-api.ap-northeast-1.amazonaws.com/barcode-test", {
-               Content-Type": "application/json"
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ barcode: barcode })
               })
-              .then(response => response.json())
-              .then(data => {
-                console.log("Lambdaの応答:", data);
+             応答:", data);
               })
               .catch(error => {
                 console.error("送信エラー:", error);
@@ -62,7 +62,7 @@
         scan();
       } catch (error) {
         alert('カメラの起動に失敗しました: ' + error.message);
-        console.error(error);
+        console.error("カメラ起動エラー:", error);
       }
     });
   </script>
