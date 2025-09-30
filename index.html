@@ -2,65 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>QRコード読み取り＆送信</title>
+  <title>カメラ起動テスト</title>
 </head>
 <body>
   <h1>サイト開いたらカメラ起動</h1>
   <video id="video" width="300" height="200" autoplay playsinline></video>
-  <canvas id="canvas" hidden></canvas>
-  <p id="result">読み取り結果: なし</p>
-
-  <!-- jsQRライブラリ -->
-  https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js</script>
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const result = document.getElementById('result');
-    const ctx = canvas.getContext('2d');
-    let sent = false;
-
     window.addEventListener('DOMContentLoaded', async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: "environment" } },
           audio: false
         });
-        video.srcObject = stream;
-
-        const scan = () => {
-          if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-            if (code && !sent) {
-              const barcode = code.data;
-              result.textContent = "読み取り結果: " + barcode;
-              sent = true;
-
-              // Lambdaへ送信
-              fetch("https://zz5f2lezac.execute-api.ap-northeast-1.amazonaws.com/barcode-test", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                               body: JSON.stringify({ barcode: barcode })
-              })
-              .then(response => response.json())
-              .then(data => {
-                console.log("Lambdaの応答:", data);
-              })
-              .catch(error => {
-                console.error("送信エラー:", error);
-              });
-            }
-          }
-          requestAnimationFrame(scan);
-        };
-
-        scan();
+        const videoElement = document.getElementById('video');
+        videoElement.srcObject = stream;
       } catch (error) {
         alert('カメラの起動に失敗しました: ' + error.message);
         console.error("カメラ起動エラー:", error);
