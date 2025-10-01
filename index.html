@@ -48,17 +48,23 @@
                         },
                         body: JSON.stringify({ barcode: barcode })
                     });
-                    
-                    const rawData = await response.text(); // まずはテキストとして受け取る
-                    let resultData;
-
-                    resultData = await JSON.parse(rawData);//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納する
-
-                    alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
-                } catch (error) {
+                    catch (error) {
                     console.error("送信エラー:", error);
                     alert("バーコード送信に失敗しました");
                 }
+               
+const rawData = await response.text(); // まずはテキストとして受け取る
+let resultData;
+
+try {
+    resultData = JSON.parse(rawData); // JSONとしてパース
+    alert("Lambdaからの返却値　：　" + resultData.message);
+} catch (e) {
+    console.error("JSONパースエラー:", e);
+    alert("Lambdaからの返却値の処理に失敗しました");
+}
+
+
 
                 //Quagga.stop(); // 読み取り後に停止
             });
