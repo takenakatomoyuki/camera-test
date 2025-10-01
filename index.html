@@ -33,7 +33,7 @@
     });
 
     function sendToLambda(data) {
-      fetch('https://<API_GATEWAY_URL>', {
+      fetch('https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ qrData: data })
