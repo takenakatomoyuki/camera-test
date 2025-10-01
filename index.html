@@ -1,47 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRコードリーダー</title>
+    <meta charset="UTF-8">
+    <title>バーコード読み取り</title>
 </head>
 <body>
-  <video id="video" width="300" height="200" autoplay></video>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
-  <script>
-    const video = document.getElementById('video');
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-      .then(stream => video.srcObject = stream);
+    <h1>バーコード読み取りテスト</h1>
+    <div id="scanner"></div>
+    <p id="result"></p>
 
-    video.addEventListener('play', () => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+    <!-- QuaggaJSの読み込み -->
+    <script csrc="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
+    <script>
+        const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";
 
-      setInterval(() => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        window.onload = function () {
+            Quagga.init({
+                inputStream: {
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner'),
+                    constraints: {
+                        facingMode: "environment" // 背面カメラ
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader"] // 一般的なバーコード
+                }
+            }, function (err) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                Quagga.start();
+            });
 
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, canvas.width, canvas.height);
+            Quagga.onDetected(async function (result) {
+                const barcode = result.codeResult.code;
+                document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;
 
-        if (code) {
-          console.log("QRコードの内容:", code.data);
-          sendToLambda(code.data); // Lambdaに送信
-        }
-      }, 500);
-    });
+                try {
+                    const response = await fetch(lambdaUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ barcode: barcode })
+                    });
 
-    function sendToLambda(data) {
-      fetch('https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ qrData: data })
-      })
-      .then(response => response.json())
-      .then(result => console.log("Lambdaの応答:", result))
-      .catch(error => console.error("エラー:", error));
-    }
-  </script>
+                    const resultData = await response.json();
+                    alert(resultData.message); // Lambdaからのメッセージを表示
+                } catch (error) {
+                    console.error("送信エラー:", error);
+                    alert("バーコード送信に失敗しました");
+                }
+
+                Quagga.stop(); // 読み取り後に停止
+            });
+        };
+    </script>
 </body>
 </html>
