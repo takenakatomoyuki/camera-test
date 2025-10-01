@@ -5,7 +5,7 @@
     <title>バーコード読み取り</title>
 </head>
 <body>
-    <h1>バーコード読み取りテスト新</h1>
+    <h1>バーコード読み取りテスト</h1>
     <div id="scanner"></div>
     <p id="result"></p>
 
@@ -34,7 +34,6 @@
                 Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
                 alert("カメラ起動！！")
             });
-alert("読み取る前")
 let lastBarcode = null;
 
 Quagga.onDetected(async function (result) {
