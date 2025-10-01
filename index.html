@@ -13,11 +13,11 @@
     <script src="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
     <script>
         const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";//APIGatewayで更改したURLを貼る
-                alert("カメラ起動！！")
-                alert("カメラ起動！！")
-                alert("カメラ起動！！")
+                alert("カメラ前")
+
 
         window.onload = function () {
+            alert("window.onloadの中")
             Quagga.init({
                 inputStream: {//カメラ映像の入力設定
                     type: "LiveStream",//スマホやPCのカメラ映像をリアルタイムで使用できるやつ
@@ -49,6 +49,7 @@ Quagga.onDetected(async function (result) {
     document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;
 
     try {
+        alert("Lambdaつなげるよー")
         const response = await fetch(lambdaUrl, {
             method: "POST",
             headers: {
@@ -60,12 +61,14 @@ Quagga.onDetected(async function (result) {
         const resultData = await response.json();
         alert(resultData.message);
     } catch (error) {
+        alert("送信エラー")
         console.error("送信エラー:", error);
         alert("バーコード送信に失敗しました");
     }
 
     // 一時停止して、再開
     Quagga.stop();
+    alert("一時停止して再開")
     setTimeout(() => {
         Quagga.start();
     }, 2000);
