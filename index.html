@@ -5,7 +5,7 @@
     <title>バーコード読み取り</title>
 </head>
 <body>
-    <h1>バーコード読み取りテストシン</h1>
+    <h1>バーコード読み取りテスト</h1>
     <div id="scanner"></div>
     <p id="result"></p>
 
@@ -13,11 +13,8 @@
     <script src="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
     <script>
         const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";//APIGatewayで更改したURLを貼る
-                alert("カメラ前")
-
 
         window.onload = function () {
-            alert("window.onloadの中")
             Quagga.init({
                 inputStream: {//カメラ映像の入力設定
                     type: "LiveStream",//スマホやPCのカメラ映像をリアルタイムで使用できるやつ
@@ -36,44 +33,31 @@
                 }
                 Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
             });
-let lastBarcode = null;
 
-Quagga.onDetected(async function (result) {
-    alert("読み取れた？")
-    const barcode = result.codeResult.code;
+            Quagga.onDetected(async function (result) {//QRコードが読み込まれたら呼び出されるイベントハンドラ。（reslt）には読み取ったバーコードの情報が含まれている
+                alert("EANコード読みとった")
+                const barcode = result.codeResult.code;//バーコードの情報のみを抽出し、変数barcodeに格納する
+                document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;//HTMLの画面上に読み取ったQRコード情報を出力するための処理。（今回の場合、pタグのidを指定している）
 
-    // 同じバーコードなら無視
-    if (barcode === lastBarcode) return;
-    lastBarcode = barcode;
+                try {
+                    alert("APIGatewayに繋ぐよー")
+                    const response = await fetch(lambdaUrl, {//ここでAWSAPIGatewayに接続を試みる（Post通信でheadersにjson情報だよという指定と、bodyにjson文字列にしたバーコードの情報を乗せて送信する）
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ barcode: barcode })
+                    });
 
-    document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;
+                    const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納するr
+                    alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
+                } catch (error) {
+                    console.error("送信エラー:", error);
+                    alert("バーコード送信に失敗しました");
+                }
 
-    try {
-        alert("Lambdaつなげるよー")
-        const response = await fetch(lambdaUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ barcode: barcode })
-        });
-
-        const resultData = await response.json();
-        alert(resultData.message);
-    } catch (error) {
-        alert("送信エラー")
-        console.error("送信エラー:", error);
-        alert("バーコード送信に失敗しました");
-    }
-
-    // 一時停止して、再開
-    Quagga.stop();
-    alert("一時停止して再開")
-    setTimeout(() => {
-        Quagga.start();
-    }, 2000);
-});
-
+                Quagga.stop(); // 読み取り後に停止
+            });
         };
     </script>
 </body>
