@@ -32,8 +32,9 @@
                     return;
                 }
                 Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
+                alert("カメラ起動！！")
             });
-
+alert("読み取る前")
 let lastBarcode = null;
 
 Quagga.onDetected(async function (result) {
