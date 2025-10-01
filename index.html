@@ -10,36 +10,36 @@
     <p id="result"></p>
 
     <!-- QuaggaJSの読み込み -->
-    <script csrc="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
+    <script src="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
     <script>
-        const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";
+        const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";//APIGatewayで更改したURLを貼る
 
         window.onload = function () {
             Quagga.init({
-                inputStream: {
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner'),
+                inputStream: {//カメラ映像の入力設定
+                    type: "LiveStream",//スマホやPCのカメラ映像をリアルタイムで使用できるやつ
+                    target: document.querySelector('#scanner'),//映像を映す場所を指定（今回の場合、divのidを指定している）
                     constraints: {
-                        facingMode: "environment" // 背面カメラ
+                        facingMode: "environment" // 背面カメラを指定
                     }
                 },
                 decoder: {
-                    readers: ["ean_reader"] // 一般的なバーコード
+                    readers: ["qr_reader"] // 一般的なバーコードの指定（ean_readerがEANコード、qr_readerがQRコード）
                 }
             }, function (err) {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                Quagga.start();
+                Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
             });
 
-            Quagga.onDetected(async function (result) {
-                const barcode = result.codeResult.code;
-                document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;
+            Quagga.onDetected(async function (result) {//QRコードが読み込まれたら呼び出されるイベントハンドラ。（reslt）には読み取ったバーコードの情報が含まれている
+                const barcode = result.codeResult.code;//バーコードの情報のみを抽出し、変数barcodeに格納する
+                document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;//HTMLの画面上に読み取ったQRコード情報を出力するための処理。（今回の場合、pタグのidを指定している）
 
                 try {
-                    const response = await fetch(lambdaUrl, {
+                    const response = await fetch(lambdaUrl, {//ここでAWSAPIGatewayに接続を試みる（Post通信でheadersにjson情報だよという指定と、bodyにjson文字列にしたバーコードの情報を乗せて送信する）
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
