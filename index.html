@@ -34,28 +34,33 @@
                 Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
             });
 
-            Quagga.onDetected(async function (result) {//QRコードが読み込まれたら呼び出されるイベントハンドラ。（reslt）には読み取ったバーコードの情報が含まれている
-                const barcode = result.codeResult.code;//バーコードの情報のみを抽出し、変数barcodeに格納する
-                document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;//HTMLの画面上に読み取ったQRコード情報を出力するための処理。（今回の場合、pタグのidを指定している）
+            Quagga.onDetected(async function (result) {
+    const barcode = result.codeResult.code;
+    document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;
 
-                try {
-                    const response = await fetch(lambdaUrl, {//ここでAWSAPIGatewayに接続を試みる（Post通信でheadersにjson情報だよという指定と、bodyにjson文字列にしたバーコードの情報を乗せて送信する）
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ barcode: barcode })
-                    });
+    try {
+        const response = await fetch(lambdaUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ barcode: barcode })
+        });
 
-                    const resultData = await response.json();
-                    alert(resultData.message); // Lambdaからのメッセージを表示
-                } catch (error) {
-                    console.error("送信エラー:", error);
-                    alert("バーコード送信に失敗しました");
-                }
+        const resultData = await response.json();
+        alert(resultData.message);
+    } catch (error) {
+        console.error("送信エラー:", error);
+        alert("バーコード送信に失敗しました");
+    }
 
-                Quagga.stop(); // 読み取り後に停止
-            });
+    // 一時停止して、2秒後に再開
+    Quagga.stop();
+    setTimeout(() => {
+        Quagga.start();
+    }, 2000); // 2秒後に再開
+});
+
         };
     </script>
 </body>
