@@ -5,7 +5,7 @@
     <title>バーコード読み取り</title>
 </head>
 <body>
-    <h1>バーコード読み取りテスト</h1>
+    <h1>バーコード読み取りテストaaaaaaaaa</h1>
     <div id="scanner"></div>
     <p id="result"></p>
 
@@ -51,9 +51,8 @@
 
                     const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納するr
 
-const rawData = await response.json();
-const resultData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
-alert(resultData.message);
+const data = typeof resultData === "string" ? JSON.parse(resultData) : resultData;
+alert(data.message);
 
 
                     alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
