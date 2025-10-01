@@ -48,7 +48,7 @@
                         },
                         body: JSON.stringify({ barcode: barcode })
                     });
-                    catch (error) {
+                }catch (error) {
                     console.error("送信エラー:", error);
                     alert("バーコード送信に失敗しました");
                 }
