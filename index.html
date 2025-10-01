@@ -50,9 +50,9 @@
                     });
                     
                     const rawData = await response.text(); // まずはテキストとして受け取る
-                    //let resultData;
+                    let resultData;
 
-                    const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納する
+                    resultData = await rawData.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納する
 
                     alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
                 } catch (error) {
