@@ -35,7 +35,7 @@
             });
 
             Quagga.onDetected(async function (result) {//QRコードが読み込まれたら呼び出されるイベントハンドラ。（reslt）には読み取ったバーコードの情報が含まれている
-                alert("EANコード読みとった")
+                alert("EANコード読みとった : " + result)
                 const barcode = result.codeResult.code;//バーコードの情報のみを抽出し、変数barcodeに格納する
                 document.getElementById("result").textContent = "読み取ったバーコード: " + barcode;//HTMLの画面上に読み取ったQRコード情報を出力するための処理。（今回の場合、pタグのidを指定している）
 
