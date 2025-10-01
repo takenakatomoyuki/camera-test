@@ -5,7 +5,7 @@
     <title>バーコード読み取り</title>
 </head>
 <body>
-    <h1>バーコード読み取りテスト</h1>
+    <h1>バーコード読み取りテストシン</h1>
     <div id="scanner"></div>
     <p id="result"></p>
 
@@ -27,7 +27,7 @@
                     }
                 },
                 decoder: {
-                    readers: ["qr_reader"] // 一般的なバーコードの指定（ean_readerがEANコード、qr_readerがQRコード）
+                    readers: ["ean_reader"] // 一般的なバーコードの指定（ean_readerがEANコード、qr_readerがQRコード）
                 }
             }, function (err) {
                 if (err) {
