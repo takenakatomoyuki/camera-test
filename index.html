@@ -51,8 +51,10 @@
 
                     const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納するr
 
-console.log("Lambdaからのレスポンス:", resultData);
+const rawData = await response.json();
+const resultData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
 alert(resultData.message);
+
 
                     alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
                 } catch (error) {
