@@ -13,6 +13,9 @@
     <script src="https://unpkg.com/@ericblade/quagga2@1.7.4/dist/quagga.min.js"></script>
     <script>
         const lambdaUrl = "https://zm1pticc9k.execute-api.ap-northeast-1.amazonaws.com/calcRestApi";//APIGatewayで更改したURLを貼る
+                alert("カメラ起動！！")
+                alert("カメラ起動！！")
+                alert("カメラ起動！！")
 
         window.onload = function () {
             Quagga.init({
@@ -32,7 +35,6 @@
                     return;
                 }
                 Quagga.start();//上記の初期化が完了したらこの関数でカメラを起動する
-                alert("カメラ起動！！")
             });
 let lastBarcode = null;
 
