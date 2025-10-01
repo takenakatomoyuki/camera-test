@@ -5,7 +5,7 @@
     <title>バーコード読み取り</title>
 </head>
 <body>
-    <h1>バーコード読み取りテスト更新</h1>
+    <h1>バーコード読み取りテスト新</h1>
     <div id="scanner"></div>
     <p id="result"></p>
 
@@ -37,6 +37,7 @@
 let lastBarcode = null;
 
 Quagga.onDetected(async function (result) {
+    alert("読み取れた？")
     const barcode = result.codeResult.code;
 
     // 同じバーコードなら無視
