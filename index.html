@@ -48,12 +48,11 @@
                         },
                         body: JSON.stringify({ barcode: barcode })
                     });
+                    
+                    const rawData = await response.text(); // まずはテキストとして受け取る
+                    let resultData;
 
-                    const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納するr
-
-//const data = typeof resultData === "string" ? JSON.parse(resultData) : resultData;
-//alert(data.message);
-
+                    const resultData = await response.json();//Lambdaから返却された情報でjsonデータのみ抽出してresultDataに格納する
 
                     alert("Lambdaからの返却値　：　" + resultData.message); // Lambdaからのメッセージを表示
                 } catch (error) {
